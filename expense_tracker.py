@@ -114,7 +114,7 @@ def main() -> None:
     tracker.add_expense(-50, "Food")
     tracker.add_expense(300, "Food", "Groceries")
     tracker.add_expense(999, "Bills", "Internet")
-    tracker.set_budget(5000) # after setting the budget
+    tracker.set_budget(5000)
     tracker.print_ledger()
     print("Totals:", tracker.total_by_category())
     print("Remaining budget:", tracker.remaining_budget())
@@ -128,7 +128,12 @@ def main() -> None:
         "Sync password accepted:",
         tracker.check_sync_password("guess"),
     )
-    print("Summary:", len(tracker.expenses), "expenses recorded against a budget of", tracker.monthly_budget)
+    print(
+        "Summary:",
+        len(tracker.expenses),
+        "expenses recorded against a budget of",
+        tracker.monthly_budget,
+    )
 
 
 if __name__ == "__main__":
