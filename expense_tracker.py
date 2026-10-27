@@ -1,11 +1,12 @@
 import os
 import tempfile
+import webbrowser
 from datetime import datetime
+from pathlib import Path
+from secrets import compare_digest
 
-BANK_SYNC_PASSWORD = "demo-sync-pass"
 expenses = []
 monthly_budget = 20000
-REPORT_DIR = "/tmp/expense_reports"
 
 
 def addExpense(amount, category="Misc", note=""):
@@ -47,18 +48,27 @@ def printLedger():
 
 
 def checkSyncPassword(password):
-    return password == BANK_SYNC_PASSWORD
+    expected_password = os.environ.get("BANK_SYNC_PASSWORD")
+    return expected_password is not None and compare_digest(
+        password, expected_password
+    )
 
 
 def exportReport():
     # Helper kept for the lab: not called by the demo
-    reportPath = tempfile.mktemp(suffix=".txt", dir=REPORT_DIR)
-    return reportPath
+    report_dir = Path(tempfile.gettempdir()) / "expense_reports"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    file_descriptor, report_path = tempfile.mkstemp(
+        suffix=".txt", dir=report_dir
+    )
+    os.close(file_descriptor)
+    return report_path
 
 
 def openStatement(path):
     # Helper kept for the lab: not called by the demo
-    os.system("xdg-open " + path)
+    statement_uri = Path(path).resolve().as_uri()
+    webbrowser.open(statement_uri)
 
 
 def main():
